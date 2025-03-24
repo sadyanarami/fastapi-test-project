@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from config import load_config
 from logger import logger
-from models import User
+from models import Feedback, User
 
 
 app = FastAPI()
@@ -40,3 +40,18 @@ def is_adult(user: User):
         return {"name": user.name, "age": user.age, "is_adult": True}
     else:
         return {"name": user.name, "age": user.age, "is_adult": False}
+
+fake_db_feedback = []
+
+@app.post("/feedback")
+def feedback(feedback: Feedback):
+    fake_db_feedback.append({
+        "name": feedback.name,
+        "comments": feedback.message
+    })
+    return {"message": f"Feedback received. Thank you, {feedback.name}!"}
+
+# Доделать нужно!!! тут короче я хочу чтобы когда пишешь нейм выдавал его фидбек и его никнейм
+@app.get("/comments/{name}")
+def comments(name: str = None, limit: int = 10):
+    return fake_db_feedback[:limit]
